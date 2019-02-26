@@ -98,10 +98,10 @@ class KubernetesPodOperator(BaseOperator):
                                                  config_file=self.config_file)
             gen = pod_generator.PodGenerator()
 
-            for mount in self.volume_mounts:
-                gen.add_mount(mount)
             for volume in self.volumes:
                 gen.add_volume(volume)
+            for mount in self.volume_mounts:
+                gen.add_mount(mount)
 
             pod = gen.make_pod(
                 namespace=self.namespace,
@@ -142,7 +142,8 @@ class KubernetesPodOperator(BaseOperator):
 
             return result
         except AirflowException as ex:
-            raise AirflowException('Pod Launching failed: {error}'.format(error=ex))
+            raise AirflowException(
+                'Pod Launching failed: {error}'.format(error=ex))
 
     @apply_defaults
     def __init__(self,
@@ -195,7 +196,8 @@ class KubernetesPodOperator(BaseOperator):
         self.affinity = affinity or {}
         self.do_xcom_push = do_xcom_push
         if kwargs.get('xcom_push') is not None:
-            raise AirflowException("'xcom_push' was deprecated, use 'do_xcom_push' instead")
+            raise AirflowException(
+                "'xcom_push' was deprecated, use 'do_xcom_push' instead")
 
         self.resources = resources or Resources()
         self.config_file = config_file
